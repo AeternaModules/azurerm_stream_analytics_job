@@ -34,17 +34,17 @@ EOT
     resource_group_name                      = string
     transformation_query                     = string
     compatibility_level                      = optional(string)
-    content_storage_policy                   = optional(string, "SystemAccount")
-    data_locale                              = optional(string, "en-US")
-    events_late_arrival_max_delay_in_seconds = optional(number, 5)
-    events_out_of_order_max_delay_in_seconds = optional(number, 0)
-    events_out_of_order_policy               = optional(string, "Adjust")
-    output_error_policy                      = optional(string, "Drop")
-    sku_name                                 = optional(string, "Standard")
+    content_storage_policy                   = optional(string) # Default: "SystemAccount"
+    data_locale                              = optional(string) # Default: "en-US"
+    events_late_arrival_max_delay_in_seconds = optional(number) # Default: 5
+    events_out_of_order_max_delay_in_seconds = optional(number) # Default: 0
+    events_out_of_order_policy               = optional(string) # Default: "Adjust"
+    output_error_policy                      = optional(string) # Default: "Drop"
+    sku_name                                 = optional(string) # Default: "Standard"
     stream_analytics_cluster_id              = optional(string)
     streaming_units                          = optional(number)
     tags                                     = optional(map(string))
-    type                                     = optional(string, "Cloud")
+    type                                     = optional(string) # Default: "Cloud"
     identity = optional(object({
       identity_ids = optional(set(string))
       type         = string
@@ -52,7 +52,7 @@ EOT
     job_storage_account = optional(object({
       account_key         = optional(string)
       account_name        = string
-      authentication_mode = optional(string, "ConnectionString")
+      authentication_mode = optional(string) # Default: "ConnectionString"
     }))
   }))
 }
