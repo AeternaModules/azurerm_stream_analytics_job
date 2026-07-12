@@ -1,3 +1,7 @@
+output "stream_analytics_jobs_id" {
+  description = "Map of id values across all stream_analytics_jobs, keyed the same as var.stream_analytics_jobs"
+  value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => v.id }
+}
 output "stream_analytics_jobs_compatibility_level" {
   description = "Map of compatibility_level values across all stream_analytics_jobs, keyed the same as var.stream_analytics_jobs"
   value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => v.compatibility_level }
