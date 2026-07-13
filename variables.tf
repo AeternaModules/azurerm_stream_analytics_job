@@ -55,86 +55,110 @@ EOT
       authentication_mode = optional(string)
     }))
   }))
-  # --- Unconfirmed validation candidates, derived from azurerm_stream_analytics_job's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: resource_group_name
-  #   condition: length(value) <= 90
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  # path: resource_group_name
-  #   condition: !endswith(value, ".")
-  #   message:   [from resourcegroups.ValidateName: must not end with "."]
-  #   source:    [from resourcegroups.ValidateName: must not end with "."]
-  # path: resource_group_name
-  #   condition: length(value) != 0
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  # path: resource_group_name
-  #   source:    [from resourcegroups.ValidateName] !matched
-  # path: location
-  #   source:    location.EnhancedValidate: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: stream_analytics_cluster_id
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: compatibility_level
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: data_locale
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: events_late_arrival_max_delay_in_seconds
-  #   condition: value >= -1 && value <= 1814399
-  #   message:   must be between -1 and 1814399
-  # path: events_out_of_order_max_delay_in_seconds
-  #   condition: value >= 0 && value <= 599
-  #   message:   must be between 0 and 599
-  # path: events_out_of_order_policy
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: type
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: output_error_policy
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: streaming_units
-  #   condition: value >= 1 && value <= 120
-  #   message:   must be between 1 and 120
-  # path: content_storage_policy
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: job_storage_account.authentication_mode
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: job_storage_account.account_name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: job_storage_account.account_key
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: transformation_query
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: identity.type
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: identity.identity_ids[*]
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] !ok
-  # path: identity.identity_ids[*]
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] err != nil
-  # path: sku_name
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tags
-  #   condition: length(value) <= 50
-  #   message:   [from tags.Validate: invalid when len(value) > 50]
-  #   source:    [from tags.Validate: invalid when len(value) > 50]
-  # path: tags
-  #   condition: length(value) <= 512
-  #   message:   [from tags.Validate: invalid when len(value) > 512]
-  #   source:    [from tags.Validate: invalid when len(value) > 512]
-  # path: tags
-  #   source:    [from tags.Validate] err != nil
-  # path: tags
-  #   condition: length(value) <= 256
-  #   message:   [from tags.Validate: invalid when len(value) > 256]
-  #   source:    [from tags.Validate: invalid when len(value) > 256]
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        length(v.name) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        length(v.resource_group_name) <= 90
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) > 90]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        !endswith(v.resource_group_name, ".")
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: must not end with \".\"]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        length(v.resource_group_name) != 0
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) == 0]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.stream_analytics_cluster_id == null || (length(v.stream_analytics_cluster_id) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.data_locale == null || (length(v.data_locale) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.events_late_arrival_max_delay_in_seconds == null || (v.events_late_arrival_max_delay_in_seconds >= -1 && v.events_late_arrival_max_delay_in_seconds <= 1814399)
+      )
+    ])
+    error_message = "must be between -1 and 1814399"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.events_out_of_order_max_delay_in_seconds == null || (v.events_out_of_order_max_delay_in_seconds >= 0 && v.events_out_of_order_max_delay_in_seconds <= 599)
+      )
+    ])
+    error_message = "must be between 0 and 599"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.streaming_units == null || (v.streaming_units >= 1 && v.streaming_units <= 120)
+      )
+    ])
+    error_message = "must be between 1 and 120"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.job_storage_account == null || (length(v.job_storage_account.account_name) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.job_storage_account == null || (v.job_storage_account.account_key == null || (length(v.job_storage_account.account_key) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        length(v.transformation_query) > 0
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.stream_analytics_jobs : (
+        v.tags == null || (length(v.tags) <= 50)
+      )
+    ])
+    error_message = "[from tags.Validate: invalid when len(value) > 50]"
+  }
+  # Note: 15 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
