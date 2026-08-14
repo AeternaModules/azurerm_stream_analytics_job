@@ -28,7 +28,7 @@ output "stream_analytics_jobs_events_out_of_order_policy" {
 }
 output "stream_analytics_jobs_identity" {
   description = "Map of identity values across all stream_analytics_jobs, keyed the same as var.stream_analytics_jobs"
-  value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => v.identity if v.identity != null && length(v.identity) > 0 }
+  value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => one(v.identity) if v.identity != null && length(v.identity) > 0 }
 }
 output "stream_analytics_jobs_job_id" {
   description = "Map of job_id values across all stream_analytics_jobs, keyed the same as var.stream_analytics_jobs"
@@ -36,7 +36,7 @@ output "stream_analytics_jobs_job_id" {
 }
 output "stream_analytics_jobs_job_storage_account" {
   description = "Map of job_storage_account values across all stream_analytics_jobs, keyed the same as var.stream_analytics_jobs"
-  value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => v.job_storage_account if v.job_storage_account != null && length(v.job_storage_account) > 0 }
+  value       = { for k, v in azurerm_stream_analytics_job.stream_analytics_jobs : k => one(v.job_storage_account) if v.job_storage_account != null && length(v.job_storage_account) > 0 }
   sensitive   = true
 }
 output "stream_analytics_jobs_location" {
